@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="Layer_2" data-name="Layer 2" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 48 48">
+  <defs>
+    <style>
+      .cls-1 {
+        stroke-width: 3.25px;
+      }
+
+      .cls-1, .cls-2, .cls-3, .cls-4 {
+        fill: none;
+      }
+
+      .cls-1, .cls-3 {
+        stroke-linejoin: round;
+      }
+
+      .cls-1, .cls-4 {
+        stroke: #494949;
+      }
+
+      .cls-5 {
+        clip-path: url(#clippath-1);
+      }
+
+      .cls-6 {
+        fill: #8ac9fe;
+      }
+
+      .cls-7 {
+        clip-path: url(#clippath);
+      }
+
+      .cls-3 {
+        stroke: #fff;
+        stroke-linecap: round;
+        stroke-width: .73px;
+      }
+
+      .cls-8 {
+        fill: #66afe2;
+      }
+
+      .cls-4 {
+        stroke-miterlimit: 10;
+        stroke-width: 2.6px;
+      }
+    </style>
+    <clipPath id="clippath">
+      <rect class="cls-2" width="48" height="48"/>
+    </clipPath>
+    <clipPath id="clippath-1">
+      <circle class="cls-8" cx="29.99" cy="25.41" r="12.86"/>
+    </clipPath>
+  </defs>
+  <g id="Layer_1-2" data-name="Layer 1">
+    <g class="cls-7">
+      <g>
+        <line class="cls-4" x1="41.23" y1="28.59" x2="41.23" y2="42.81"/>
+        <line class="cls-4" x1="29.99" y1="28.59" x2="29.99" y2="42.81"/>
+        <polyline class="cls-1" points="29.99 12.75 29.99 6.81 13.37 6.81 13.37 30.59 6.07 30.59"/>
+        <line class="cls-4" x1="18.76" y1="28.59" x2="18.76" y2="42.81"/>
+        <g>
+          <circle class="cls-8" cx="29.99" cy="25.41" r="12.86"/>
+          <g class="cls-5">
+            <circle class="cls-6" cx="33.58" cy="25.42" r="12.86"/>
+          </g>
+        </g>
+        <g>
+          <line class="cls-3" x1="32.62" y1="20.22" x2="37.7" y2="20.22"/>
+          <line class="cls-3" x1="32.62" y1="22.81" x2="37.7" y2="22.81"/>
+          <line class="cls-3" x1="32.62" y1="25.41" x2="37.7" y2="25.41"/>
+          <line class="cls-3" x1="32.62" y1="28" x2="37.7" y2="28"/>
+          <line class="cls-3" x1="32.62" y1="30.59" x2="37.7" y2="30.59"/>
+        </g>
+      </g>
+    </g>
+  </g>
+</svg>
