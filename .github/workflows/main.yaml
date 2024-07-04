@@ -1,11 +1,13 @@
----
 name: Build and Push Golang Image to AWS ECR
 on:
-  push:
+  pull_request:
     branches: [ main ]
+    types: [closed]
+
 jobs:
   build-and-push:
     name: Build and Push to ECR
+    if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     steps:
     - name: Checkout
@@ -21,7 +23,6 @@ jobs:
     - name: Login to Amazon ECR
       id: login-ecr
       uses: aws-actions/amazon-ecr-login@v1
-      
 
     - name: Automatic Tagging of Releases
       id: increment-git-tag
