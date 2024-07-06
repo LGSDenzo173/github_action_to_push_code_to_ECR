@@ -64,7 +64,7 @@ jobs:
           fi
 
           # Log in to Amazon ECR
-          aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $ECR_REGISTRY
+          aws ecr get-login-password --region eu-west-1 | docker login --username AWS --password-stdin 643114869083.dkr.ecr.eu-west-1.amazonaws.com
 
           # Pull the latest Docker image
           docker pull $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
