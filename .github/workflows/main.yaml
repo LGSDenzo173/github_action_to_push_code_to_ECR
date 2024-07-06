@@ -47,30 +47,38 @@ jobs:
         EC2_INSTANCE_ID: ${{ secrets.EC2_INSTANCE_ID }}
         EC2_USER: ${{ secrets.EC2_USER }}
         EC2_HOST: ${{ secrets.EC2_HOST }}
+        AWS_REGION: ${{ secrets.AWS_REGION }}
       run: |
         echo "${{ secrets.EC2_SSH_KEY }}" > key.pem
         chmod 400 key.pem
         ssh -o StrictHostKeyChecking=no -i key.pem $EC2_USER@$EC2_HOST << 'EOF'
+          # Ensure system is up-to-date
+          sudo apt-get update
+          sudo apt-get upgrade -y
+
           # Ensure AWS CLI is installed
           if ! command -v aws &> /dev/null; then
-            sudo apt-get update
             sudo apt-get install -y awscli
           fi
 
+          # Ensure Docker is installed
+          if ! command -v docker &> /dev/null; then
+            curl -fsSL https://get.docker.com -o get-docker.sh
+            sudo sh get-docker.sh
+          fi
+
           # Log in to Amazon ECR
-          aws ecr get-login-password --region ${{ secrets.AWS_REGION }} | docker login --username AWS --password-stdin $ECR_REGISTRY
+          aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $ECR_REGISTRY
 
           # Pull the latest Docker image
           docker pull $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
 
           # Stop running containers created from the image
-          docker ps -q --filter ancestor=$ECR_REGISTRY/$ECR_REPOSITORY | xargs -r docker stop
+          docker ps -q --filter ancestor=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG | xargs -r docker stop
 
           # Run the new Docker image
           docker run -d --rm --name app -p 5000:5000 $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
         EOF
-
-
 
 # name: Build and Push Golang Image to AWS ECR
 # on:
