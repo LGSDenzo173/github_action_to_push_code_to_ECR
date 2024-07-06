@@ -1,12 +1,12 @@
-name: Build and Push Golang Image to AWS ECR
+name: Build, Push, and Deploy  Image to AWS ECR and EC2
 on:
   pull_request:
     branches: [ main ]
     types: [closed]
 
 jobs:
-  build-and-push:
-    name: Build and Push to ECR
+  build-push-deploy:
+    name: Build, Push to ECR, and Deploy to EC2
     if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     steps:
@@ -38,3 +38,62 @@ jobs:
       run: |
         docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
         docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+
+    - name: Deploy to EC2
+      env:
+        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+        ECR_REPOSITORY: githubaction_docker_image
+        IMAGE_TAG: ${{ steps.increment-git-tag.outputs.git-tag }}
+        EC2_INSTANCE_ID: ${{ secrets.EC2_INSTANCE_ID }}
+        EC2_USER: ${{ secrets.EC2_USER }}
+        EC2_HOST: ${{ secrets.EC2_HOST }}
+      run: |
+        ssh -o StrictHostKeyChecking=no $EC2_USER@$EC2_HOST << 'EOF'
+          docker login -u AWS -p $(aws ecr get-login-password --region ${{ secrets.AWS_REGION }}) $ECR_REGISTRY
+          docker pull $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+          docker stop $(docker ps -q --filter ancestor=$ECR_REGISTRY/$ECR_REPOSITORY)
+          docker run -d --rm --name app -p 5000:5000 $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+        EOF
+
+
+
+# name: Build and Push Golang Image to AWS ECR
+# on:
+#   pull_request:
+#     branches: [ main ]
+#     types: [closed]
+
+# jobs:
+#   build-and-push:
+#     name: Build and Push to ECR
+#     if: github.event.pull_request.merged == true
+#     runs-on: ubuntu-latest
+#     steps:
+#     - name: Checkout
+#       uses: actions/checkout@v2
+
+#     - name: Configure AWS credentials
+#       uses: aws-actions/configure-aws-credentials@v1
+#       with:
+#         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+#         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+#         aws-region: ${{ secrets.AWS_REGION }}
+
+#     - name: Login to Amazon ECR
+#       id: login-ecr
+#       uses: aws-actions/amazon-ecr-login@v1
+
+#     - name: Automatic Tagging of Releases
+#       id: increment-git-tag
+#       run: |
+#         bash ./build/git_update.sh -v major
+
+#     - name: Build, Tag, and Push the Image to Amazon ECR
+#       id: build-image
+#       env:
+#         ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+#         ECR_REPOSITORY: githubaction_docker_image
+#         IMAGE_TAG: ${{ steps.increment-git-tag.outputs.git-tag }}
+#       run: |
+#         docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+#         docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
