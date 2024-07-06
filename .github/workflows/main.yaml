@@ -1,4 +1,4 @@
-name: Build, Push, and Deploy Golang Image to AWS ECR and EC2
+name: Build, Push, and Deploy  Image to AWS ECR and EC2
 on:
   pull_request:
     branches: [ main ]
@@ -53,8 +53,8 @@ jobs:
         ssh -o StrictHostKeyChecking=no -i key.pem $EC2_USER@$EC2_HOST << 'EOF'
           docker login -u AWS -p $(aws ecr get-login-password --region ${{ secrets.AWS_REGION }}) $ECR_REGISTRY
           docker pull $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
-          docker stop $(docker ps -q --filter ancestor=$ECR_REGISTRY/$ECR_REPOSITORY)
-          docker run -d --rm --name app -p 80:80 $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+          docker ps -q --filter ancestor=$ECR_REGISTRY/$ECR_REPOSITORY | xargs -r docker stop
+          docker run -d --rm --name app -p 5000:5000 $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
         EOF
 
 
